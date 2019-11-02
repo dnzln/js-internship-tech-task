@@ -33,6 +33,7 @@
     "prettier": "^1.18.2"
   },
   "dependencies": {
+    "normalize.css": "^8.0.1",
     "sass": "^1.23.2"
   }
 }
