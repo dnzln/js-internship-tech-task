@@ -1,26 +1,23 @@
-// debugger;
+
 class App {
     constructor() {
-        this.arrayOfTasksObjects = [];
+        //this.arrayOfTasksObjects = [];
+        
         this.initialTasks();
         this.creatButtonListener();
     }
 
-    // updateArrayOfTasksObjects() {
-    //     let arrayOfTasks = JSON.parse(localStorage.getItem("arrayOfTasks")) || [];
-    //     arrayOfTasks.push(this);
-    //     localStorage.setItem("arrayOfTasks", JSON.stringify(arrayOfTasks));
-    // }
-
     initialTasks() {
         let fragment = new DocumentFragment;
-        let arrayOfTasks = JSON.parse(localStorage.getItem("arrayOfTasks")) || [];
 
-        arrayOfTasks.forEach(taskObj => {
-            let host = document.createElement('div');
-            let newTask = new Task(taskObj, host);
-            fragment.append(host);
+        arrayOfTasksData.forEach(taskObj => {
+            if (taskObj.status != 'deleted') {
+                let host = document.createElement('div');
+                arrayOfTasksObjects.push(new Task(taskObj, host));
+                fragment.append(host);
+            }
         });
+
         document.querySelector('.tasks-section').append(fragment);
     }
 
@@ -31,18 +28,39 @@ class App {
     creatTask() {
         let createBlock = document.querySelector('.create-block');
         createBlock.classList.remove('hidden');
-        createBlock.querySelector('.cancel').addEventListener('click', () => createBlock.classList.add('hidden'));
-        createBlock.querySelector('.new-task-form').addEventListener('submit', () => {
+        createBlock.querySelector('.new-task-prior').value = '';
+        let App = this;
+
+        let listenerCancel = function() {
+            createBlock.querySelector('.new-task-title').value = '';
+            createBlock.querySelector('.new-task-description').value = '';
+            createBlock.classList.add('hidden');
+            createBlock.querySelector('.cancel').removeEventListener('click', listenerCancel);
+            createBlock.querySelector('.new-task-form').removeEventListener('submit', listenerSubmit);
+        }
+
+        let listenerSubmit = function() {
             let newData = {};
             newData.title = createBlock.querySelector('.new-task-title').value;
             newData.desc = createBlock.querySelector('.new-task-description').value;
             newData.prior = createBlock.querySelector('.new-task-prior').value;
+            newData.status = 'open';
+            createBlock.querySelector('.new-task-title').value = '';
+            createBlock.querySelector('.new-task-description').value = '';
+            createBlock.querySelector('.new-task-prior').value = '';
+            createBlock.querySelector('.new-task-form').removeEventListener('submit', listenerSubmit);
+            createBlock.querySelector('.cancel').removeEventListener('click', listenerCancel);
             createBlock.classList.add('hidden');
-            console.log(newData);
+
             let host = document.createElement('div');
-            new Task(newData, host);
+
+            arrayOfTasksObjects.push(new Task(newData, host));
+
             document.querySelector('.tasks-section').append(host);
-        });
+        }
+        
+        createBlock.querySelector('.cancel').addEventListener('click', listenerCancel, false);
+        createBlock.querySelector('.new-task-form').addEventListener('submit', listenerSubmit, false);
     }    
 }
 
@@ -52,48 +70,23 @@ class Task {
         this.title = taskData.title;
         this.desc = taskData.desc;
         this.prior = taskData.prior;
-        this.status = 'open';
-        this.container = container;
+        this.status = taskData.status;
+        this.container = container;        
         this.render(container, this.status);
-        this.doneListener();
-        this.editListener();
-        this.deleteListener();
     }
 
     editTask(newData) {
         for (let key in newData) {
-            let name = `old${key}`;            
-            this[name] = this[key];
+            //let name = `old${key}`;            
+            //this[name] = this[key];
             this[key] = newData[key];
         }
-        
         this.render(this.container, this.status);
-
-        // let tasks = document.querySelectorAll('.task-text');
-        
-        // tasks.forEach(node => {
-        //     if (node.querySelector('.task-title').innerHTML == this.oldtitle && 
-        //         node.querySelector('.task-desc').innerHTML == this.olddesc &&
-        //         node.querySelector('.task-prior').innerHTML == this.oldprior) {
-        //             node.querySelector('.task-title').innerHTML = this.title; 
-        //             node.querySelector('.task-desc').innerHTML = this.desc;
-        //             node.querySelector('.task-prior').innerHTML = this.prior;
-        //         }
-        // });
     }
 
     doneTask() {
         this.status = 'done';
         this.render(this.container, this.status);
-        // let tasks = document.querySelectorAll('.task-block');
-        
-        // tasks.forEach(node => {
-        //     if (node.querySelector('.task-title').innerHTML == this.title && 
-        //         node.querySelector('.task-desc').innerHTML == this.desc &&
-        //         node.querySelector('.task-prior').innerHTML == this.dprior) {
-        //             node.classList.add('done');
-        //         }
-        // });
     }
 
     doneListener() {
@@ -106,32 +99,57 @@ class Task {
 
     deleteListener() {
         this.container.querySelector('.delete-btn').addEventListener('click', () => {
-            //this.container.innerHTML = '';
-            this.container.remove();
             this.status = 'deleted';
+            setTimeout(updateArrayOfTasksObjects, 50);
+            this.container.remove(); 
         });
     }
 
     handleEdition() {
         let createBlock = document.querySelector('.create-block');
         createBlock.classList.remove('hidden');
-        createBlock.querySelector('.cancel').addEventListener('click', () => createBlock.classList.add('hidden'));
-        createBlock.querySelector('.new-task-form').addEventListener('submit', () => {
+        let taskThis = this;
+        createBlock.querySelector('.new-task-title').value = this.title;        
+        createBlock.querySelector('.new-task-description').value = this.desc;
+        createBlock.querySelector('.new-task-prior').value = this.prior;
+
+        let onCancel = function() {
+            createBlock.querySelector('.new-task-title').value = '';
+            createBlock.querySelector('.new-task-description').value = '';
+            createBlock.classList.add('hidden');
+            createBlock.querySelector('.cancel').removeEventListener('click', onCancel);
+            createBlock.querySelector('.new-task-form').removeEventListener('submit', onSubmit);
+        }
+
+        let onSubmit = function() {
             let newData = {};
             newData.title = createBlock.querySelector('.new-task-title').value;
             newData.desc = createBlock.querySelector('.new-task-description').value;
             newData.prior = createBlock.querySelector('.new-task-prior').value;
+            createBlock.querySelector('.new-task-title').value = '';
+            createBlock.querySelector('.new-task-description').value = '';
+            createBlock.querySelector('.new-task-prior').value = '';
+            createBlock.querySelector('.cancel').removeEventListener('click', onCancel);
+            createBlock.querySelector('.new-task-form').removeEventListener('submit', onSubmit);
             createBlock.classList.add('hidden');
-            this.editTask(newData);
-        });
+            taskThis.editTask(newData);
+        }
+
+        createBlock.querySelector('.cancel').addEventListener('click', onCancel, false);
+        createBlock.querySelector('.new-task-form').addEventListener('submit', onSubmit, false);
     }
 
     render(container, status) {
+        setTimeout(updateArrayOfTasksObjects, 50);
         container.innerHTML = '';
 
         let article = document.createElement('article');
         article.classList.add('task-block');
-        if (status == 'done') article.classList.add('done');
+        if (status == 'done') {
+            article.classList.add('done');
+        } else {
+            article.classList.remove('done');
+        }
 
         let taskTextInfo = document.createElement('div');
         taskTextInfo.classList.add('task-text');
@@ -153,6 +171,8 @@ class Task {
 
         let prior = document.createElement('span');
         prior.classList.add('priority-mark');
+        let markColor = (this.prior == 'high') ? 'high' : (this.prior == 'low') ? 'low' : 'normal';
+        prior.classList.add(markColor);
         prior.innerHTML = this.prior;
         taskMenu.append(prior);
 
@@ -179,50 +199,106 @@ class Task {
         taskMenu.append(editTaskBlock);
         article.append(taskMenu);
         container.append(article);
+
+        this.doneListener();
+        this.editListener();
+        this.deleteListener();
     }
 }
+
+
+
+let arrayOfTasksData = JSON.parse(localStorage.getItem("arrayOfTasks")) || [];
+let arrayOfTasksObjects = [];
+function updateArrayOfTasksObjects() {
+    localStorage.setItem("arrayOfTasks", JSON.stringify(arrayOfTasksObjects));
+}
+
 
 new App();
 
 
 
+// var nameFlag = 0;
+// var ageFlag = 0;
 
 
-
-
-
-
-
-
-
-
-// renderTasks(arrayOfTasks) {
-//         let tasksContainer =  new DocumentFragment();
-    
-//         arrayOfTasks.forEach(task => {
-//             let article = document.createElement('article').classList.add('task-block');
-//             let taskTextInfo = document.createElement('div').classList.add('task-text');
-    
-//             taskTextInfo.append(document.createElement('p').classList.add('task-title').innerHTML = task.title);
-//             taskTextInfo.append(document.createElement('p').classList.add('task-desc').innerHTML = task.desc);
-            
-//             let taskMenu = document.createElement('div').classList.add('task-bottom-menu-wrapper');
-//             taskMenu.append(document.createElement('span').classList.add('priority-mark').innerHTML = task.prior);
-    
-//             let editTaskBlock = document.createElement('div').classList.add('edit-task');
-//             editTaskBlock.setAttribute('tabindex', 0);
-//             let editTaskList = document.createElement('ul').classList.add('edition-menu');
-    
-//             for (let i = 0; i < 3; i++) {
-//                 let editTaskItem = document.createElement('li').classList.add('edition-item');
-//                 let editTaskBtn = document.createElement('button').classList.add('edition-item-btn').innerHTML = (i == 0) ? 'done' : (i == 1) ? 'edit' : 'delete';
-//                 editTaskBtn.setAttribute('tabindex', 0);
-//                 editTaskList.append(editTaskItem.append(editTaskBtn));
+// FILTERS.addEventListener('click', function () {
+//     switch(event.target.value) {
+//         case 'all':
+//         case 'male':
+//         case 'female': sortAndSearch(usersArray); break;
+//         case 'age-down':
+//             if(!ageFlag || ageFlag === 1) {
+//                 usersArray.sort(function(a, b){return a.dob.age-b.dob.age})
+//                 sortAndSearch(usersArray.reverse());
+//                 nameFlag = 0;
+//                 ageFlag = 2;
 //             }
-    
-//             article.append(taskMenu.append(editTaskBlock.append(editTaskList)));
-//             tasksContainer.append(article);
+//             break;
+//         case 'age-up':
+//             if(!ageFlag || ageFlag === 2) {
+//                 usersArray.sort(function(a, b){return a.dob.age-b.dob.age})
+//                 sortAndSearch(usersArray);
+//                 nameFlag = 0;
+//                 ageFlag = 1;
+//             }
+//             break;
+//         case 'name-down':
+//             if(!nameFlag || nameFlag === 1) {
+//                 usersArray = sortName(usersArray);
+//                 sortAndSearch(usersArray);
+//                 ageFlag = 0;
+//                 nameFlag = 2;
+//             }
+//             break;
+//         case 'name-up':
+//             if(!nameFlag || nameFlag === 2) {
+//                 usersArray = sortName(usersArray);
+//                 sortAndSearch(usersArray.reverse());
+//                 ageFlag = 0;
+//                 nameFlag = 1;
+//             }
+//             break;
+//     }
+//     }
+// );
+
+// SEARCH_FIELD.addEventListener('input', function() {
+//     sortAndSearch(usersArray);            
+// });
+
+// function sortName(usersArray) {
+//     usersArray.sort(function(a, b){
+//         let nameA = a.name.first.toLowerCase(), nameB = b.name.first.toLowerCase();
+//         if (nameA < nameB) return -1;
+//         if (nameA > nameB) return 1;
+//         return 0;
+//     });
+//     return usersArray;
+// }
+
+// function sortAndSearch(usersArray) {
+//     let userArrayLocal = [];
+//     usersArray.forEach(
+//         function(user) {
+//             if(FEMAIL_INPUT.checked) if(user.gender == 'female') return;
+//             if(MAIL_INPUT.checked) if(user.gender == 'male') return;
+//             if(!`${user.name.first} ${user.name.last}`.includes(SEARCH_FIELD.value.trim().toLowerCase())) return;
+//             userArrayLocal.push(user);
 //         });
     
-//         document.querySelector('.tasks-section').append(tasksContainer);
+//     MAIN_CONTAINER.innerHTML = '';
+
+//     if(SEARCH_FIELD.value.trim()) {
+//         let searchInfo = document.createElement('p');
+//         searchInfo.classList.add('search-info');
+//         if(userArrayLocal.length == 0) {
+//             searchInfo.innerHTML = `No matches found :(`;
+//         } else {
+//             searchInfo.innerHTML = `${userArrayLocal.length} was found:`;
+//         }
+//         MAIN_CONTAINER.appendChild(searchInfo);
 //     }
+//     printingUsers(userArrayLocal);
+// }

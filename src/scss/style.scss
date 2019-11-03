@@ -28,6 +28,14 @@ body {
     background-color: #298dca;
 }
 
+.cancel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
 .main-header {
     background-color: #1da1f2;
     display: flex;
@@ -288,6 +296,7 @@ body {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
+        z-index: 3;
 
         .new-task-title,
         .new-task-description,
@@ -297,6 +306,10 @@ body {
             height: 40px;
             padding-left: 10px;
             margin-top: 10px;
+        }
+
+        .new-task-description {
+            height: 80px;
         }
 
         label {
@@ -324,6 +337,19 @@ body {
 .hidden {
     display: none;
 }
+
+.tasks-section .priority-mark.high {
+    background-color: #c94848;
+}
+
+.tasks-section .priority-mark.normal {
+    background-color: #23a061;
+}
+
+.tasks-section .priority-mark.low {
+    background-color: #1185d3;
+}
+
 
 @media screen and (min-width: 768px) {
 

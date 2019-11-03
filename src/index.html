@@ -161,11 +161,11 @@
         <form action="#" method="get" class="new-task-form">
             <label>
                 Title:
-                <input class="new-task-title" type="text" placeholder="Title" minlength="5" maxlength="30" required>
+                <input class="new-task-title" type="text" placeholder="Title" maxlength="60" required>
             </label>
             <label>
                 Description:
-                <input class="new-task-description" type="text" placeholder="Description" minlength="5" maxlength="50" required>
+                <input class="new-task-description" type="text" placeholder="Description" maxlength="100">
             </label>
             <label>
                 Priority:
@@ -175,7 +175,7 @@
                     <option value="low">Low</option>
                 </select>
             </label>
-            <button class="button cancel">Cancel</button>
+            <span class="button cancel" tabindex="0">Cancel</span>
             <button type="submit" class="button submit">Save</button>
         </form>
     </div>
