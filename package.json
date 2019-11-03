@@ -5,7 +5,9 @@
   "main": "./src/index.html",
   "scripts": {
     "dev": "parcel ./src/index.html",
-    "build": "parcel build ./src/index.html"
+    "build": "parcel build ./src/index.html",
+    "predeploy": "rm -rf dist && parcel build ./src/index.html",
+    "deploy": "gh-pages -d dist"
   },
   "repository": {
     "type": "git",
@@ -17,7 +19,7 @@
   "bugs": {
     "url": "https://github.com/dnzln/js-internship-tech-task/issues"
   },
-  "homepage": "https://github.com/dnzln/js-internship-tech-task#readme",
+  "homepage": "https://dnzln.github.io/js-internship-tech-task/",
   "devDependencies": {
     "eslint": "^6.1.0",
     "eslint-config-airbnb": "^18.0.1",
@@ -29,6 +31,7 @@
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^1.7.0",
+    "gh-pages": "^2.1.1",
     "parcel-bundler": "^1.12.4",
     "prettier": "^1.18.2"
   },
