@@ -1,14 +1,16 @@
-
 class App {
-    constructor() {
-        //this.arrayOfTasksObjects = [];
-        
-        this.initialTasks();
+    constructor() {        
+        this.initialTaskRender();
         this.creatButtonListener();
+        this.creatStatusFilterListener();
+        this.creatPriorFilterListener();
+        this.creatSearchFilterListener();
     }
 
-    initialTasks() {
+    initialTaskRender() {
         let fragment = new DocumentFragment;
+        
+        arrayOfTasksObjects.length = 0;
 
         arrayOfTasksData.forEach(taskObj => {
             if (taskObj.status != 'deleted') {
@@ -21,6 +23,59 @@ class App {
         document.querySelector('.tasks-section').append(fragment);
     }
 
+    creatSearchFilterListener() {
+        document.querySelector('.search-input').addEventListener('input', () => {
+            let tasks = document.querySelectorAll('.task-block');
+            let searchInput = document.querySelector('.search-input').value.trim().toLowerCase();
+            if (searchInput) {
+                tasks.forEach(task => {
+                    if(task.querySelector('.task-title').innerHTML.trim().toLowerCase().includes(searchInput)) {
+                        task.classList.remove('hidden-search');
+                    } else {
+                        task.classList.add('hidden-search');
+                    }
+                });
+            } else {
+                tasks.forEach(task => task.classList.remove('hidden-search'));
+            }
+        });
+    }
+
+    creatStatusFilterListener() {
+        document.querySelector('.status-filter').addEventListener('change', () => {
+            let tasks = document.querySelectorAll('.task-block');
+            if (event.target.value != 'all') {
+                tasks.forEach(task => {
+                    if(!task.classList.contains(event.target.value)) {
+                        task.classList.add('hidden-status');
+                    } else {
+                        task.classList.remove('hidden-status');
+                    }
+                });
+            } else {
+                tasks.forEach(task => task.classList.remove('hidden-status'));
+            }
+        });
+    }
+
+    creatPriorFilterListener() {
+        document.querySelector('.prior-filter').addEventListener('change', () => {            
+            let tasks = document.querySelectorAll('.task-block');
+            console.log(tasks);
+            if (event.target.value != 'all') {
+                tasks.forEach(task => {
+                    if(task.querySelector('.priority-mark').innerHTML != event.target.value) {
+                        task.classList.add('hidden-prior');
+                    } else {
+                        task.classList.remove('hidden-prior');
+                    }
+                });
+            } else {
+                tasks.forEach(task => task.classList.remove('hidden-prior'));
+            }
+        });
+    }
+
     creatButtonListener() {
         document.querySelector('.creat-button').addEventListener('click', () => this.creatTask());
     }
@@ -29,7 +84,6 @@ class App {
         let createBlock = document.querySelector('.create-block');
         createBlock.classList.remove('hidden');
         createBlock.querySelector('.new-task-prior').value = '';
-        let App = this;
 
         let listenerCancel = function() {
             createBlock.querySelector('.new-task-title').value = '';
@@ -53,9 +107,7 @@ class App {
             createBlock.classList.add('hidden');
 
             let host = document.createElement('div');
-
             arrayOfTasksObjects.push(new Task(newData, host));
-
             document.querySelector('.tasks-section').append(host);
         }
         
@@ -77,8 +129,6 @@ class Task {
 
     editTask(newData) {
         for (let key in newData) {
-            //let name = `old${key}`;            
-            //this[name] = this[key];
             this[key] = newData[key];
         }
         this.render(this.container, this.status);
@@ -147,7 +197,9 @@ class Task {
         article.classList.add('task-block');
         if (status == 'done') {
             article.classList.add('done');
+            article.classList.remove('open');
         } else {
+            article.classList.add('open');
             article.classList.remove('done');
         }
 
@@ -206,99 +258,10 @@ class Task {
     }
 }
 
-
-
 let arrayOfTasksData = JSON.parse(localStorage.getItem("arrayOfTasks")) || [];
 let arrayOfTasksObjects = [];
 function updateArrayOfTasksObjects() {
     localStorage.setItem("arrayOfTasks", JSON.stringify(arrayOfTasksObjects));
 }
 
-
 new App();
-
-
-
-// var nameFlag = 0;
-// var ageFlag = 0;
-
-
-// FILTERS.addEventListener('click', function () {
-//     switch(event.target.value) {
-//         case 'all':
-//         case 'male':
-//         case 'female': sortAndSearch(usersArray); break;
-//         case 'age-down':
-//             if(!ageFlag || ageFlag === 1) {
-//                 usersArray.sort(function(a, b){return a.dob.age-b.dob.age})
-//                 sortAndSearch(usersArray.reverse());
-//                 nameFlag = 0;
-//                 ageFlag = 2;
-//             }
-//             break;
-//         case 'age-up':
-//             if(!ageFlag || ageFlag === 2) {
-//                 usersArray.sort(function(a, b){return a.dob.age-b.dob.age})
-//                 sortAndSearch(usersArray);
-//                 nameFlag = 0;
-//                 ageFlag = 1;
-//             }
-//             break;
-//         case 'name-down':
-//             if(!nameFlag || nameFlag === 1) {
-//                 usersArray = sortName(usersArray);
-//                 sortAndSearch(usersArray);
-//                 ageFlag = 0;
-//                 nameFlag = 2;
-//             }
-//             break;
-//         case 'name-up':
-//             if(!nameFlag || nameFlag === 2) {
-//                 usersArray = sortName(usersArray);
-//                 sortAndSearch(usersArray.reverse());
-//                 ageFlag = 0;
-//                 nameFlag = 1;
-//             }
-//             break;
-//     }
-//     }
-// );
-
-// SEARCH_FIELD.addEventListener('input', function() {
-//     sortAndSearch(usersArray);            
-// });
-
-// function sortName(usersArray) {
-//     usersArray.sort(function(a, b){
-//         let nameA = a.name.first.toLowerCase(), nameB = b.name.first.toLowerCase();
-//         if (nameA < nameB) return -1;
-//         if (nameA > nameB) return 1;
-//         return 0;
-//     });
-//     return usersArray;
-// }
-
-// function sortAndSearch(usersArray) {
-//     let userArrayLocal = [];
-//     usersArray.forEach(
-//         function(user) {
-//             if(FEMAIL_INPUT.checked) if(user.gender == 'female') return;
-//             if(MAIL_INPUT.checked) if(user.gender == 'male') return;
-//             if(!`${user.name.first} ${user.name.last}`.includes(SEARCH_FIELD.value.trim().toLowerCase())) return;
-//             userArrayLocal.push(user);
-//         });
-    
-//     MAIN_CONTAINER.innerHTML = '';
-
-//     if(SEARCH_FIELD.value.trim()) {
-//         let searchInfo = document.createElement('p');
-//         searchInfo.classList.add('search-info');
-//         if(userArrayLocal.length == 0) {
-//             searchInfo.innerHTML = `No matches found :(`;
-//         } else {
-//             searchInfo.innerHTML = `${userArrayLocal.length} was found:`;
-//         }
-//         MAIN_CONTAINER.appendChild(searchInfo);
-//     }
-//     printingUsers(userArrayLocal);
-// }
