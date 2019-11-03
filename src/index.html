@@ -32,7 +32,7 @@
         </nav>
 
         <section class="tasks-section">
-            <article class="task-block">
+            <!-- <article class="task-block">
                 <div class="task-text">
                     <p class="task-title">learn javascript</p>
                     <p class="task-desc">for ciklum internship</p>
@@ -49,7 +49,7 @@
                     </div>
                 </div>
             </article>
-
+            <div>
             <article class="task-block">
                 <div class="task-text">
                     <p class="task-title">learn javascript</p>
@@ -67,6 +67,7 @@
                     </div>
                 </div>
             </article>
+            </div>
             <article class="task-block done">
                 <div class="task-text">
                     <p class="task-title">learn javascript</p>
@@ -153,28 +154,28 @@
                         </ul>
                     </div>
                 </div>
-            </article>
+            </article> -->
         </section>
     
-    <div class="create-block">
+    <div class="create-block hidden">
         <form action="#" method="get" class="new-task-form">
             <label>
                 Title:
-                <input class="new-task-title" type="text" placeholder="Title">
+                <input class="new-task-title" type="text" placeholder="Title" minlength="5" maxlength="30" required>
             </label>
             <label>
                 Description:
-                <input class="new-task-description" type="text" placeholder="Description">
+                <input class="new-task-description" type="text" placeholder="Description" minlength="5" maxlength="50" required>
             </label>
             <label>
                 Priority:
-                <select name="new-task-prior" class="new-task-prior">
+                <select name="new-task-prior" class="new-task-prior" required>
                     <option value="high">High</option>
                     <option value="normal">Normal</option>
                     <option value="low">Low</option>
                 </select>
             </label>
-            <button class="button">Cancel</button>
+            <button class="button cancel">Cancel</button>
             <button type="submit" class="button submit">Save</button>
         </form>
     </div>

@@ -267,7 +267,6 @@ body {
 }
 
 .create-block {
-    display: none;
     position: fixed;
     top: 10px;
     left:50%; 
@@ -320,6 +319,10 @@ body {
             margin-left: 10%;
         }
     }    
+}
+
+.hidden {
+    display: none;
 }
 
 @media screen and (min-width: 768px) {
