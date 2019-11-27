@@ -1,8 +1,6 @@
-# Tech Task for Ciklum JS Band Internship
+# TO-DO-App
 
 ## TODOList application
-
-### Usage documentation
 
 Using this app you can manage tasks that you need to execute. This app provide next functionality:
 
@@ -18,5 +16,5 @@ Using the search field and choosing a specific type of tasks in the filter field
 you can sort your tasks and select only those that are relevant to you.
 
 [Demo](https://dnzln.github.io/js-internship-tech-task/)
-[Code base](https://github.com/dnzln/js-internship-tech-task)
 
+[Code base](https://github.com/dnzln/js-internship-tech-task)
