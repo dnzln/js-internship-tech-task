@@ -1,6 +1,4 @@
-# TO-DO-App
-
-## TODOList application
+# TODOList application
 
 Using this app you can manage tasks that you need to execute. This app provide next functionality:
 
